@@ -24,7 +24,6 @@ Coursework has → turned into a real product of the junior+ level
 
 
 ## Launch
-```bash
 # 1. Create a zoo_db database in MySQL
 # 2. application.properties — enter your MySQL password
 # 3. Launch ZooManagementWebApplication.java
@@ -32,8 +31,6 @@ Coursework has → turned into a real product of the junior+ level
 
 
 ## Stack
-
-
 Spring Boot 3, Spring Security, Spring Data JPA
 Thymeleaf + Bootstrap 5
 MySQL
