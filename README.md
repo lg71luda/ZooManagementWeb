@@ -20,12 +20,6 @@
 | KEEPER    | Главная → Животные → Кормления (расписание + статистика)              |
 | VET       | Главная → Животные                                                     |
 
-## Скриншоты
-![Главная страница](screenshots/home.png)
-![Касса](screenshots/tickets.png)
-![Статистика билетов](screenshots/tickets-stats.png)
-![Кормления](screenshots/feedings.png)
-
 ## Запуск
 1. Создать БД `zoo_db` в MySQL
 2. В `application.properties` указать пароль от БД
