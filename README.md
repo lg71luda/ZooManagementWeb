@@ -23,13 +23,6 @@ Coursework has → turned into a real product of the junior+ level
 | VET       | Home → Animals |
 
 
-## Screenshots
-! [Home](screenshots/home.png)
-! [Cashier](screenshots/tickets.png)
-! [Feedings](screenshots/feedings.png)
-! [Ticket Statistics](screenshots/tickets-stats.png)
-
-
 ## Launch
 ```bash
 # 1. Create a zoo_db database in MySQL
