@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика кормлений</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/home}">Зоопарк «Сафари»</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" th:href="@{/feedings}">Расписание</a>
+            <a class="nav-link active" th:href="@{/feedings/stats}">Статистика</a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button class="btn btn-outline-light btn-sm" type="submit">Выход</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h1 class="text-success text-center mb-5">Статистика по кормам</h1>
+
+    <!-- Общая сводка -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card shadow text-center bg-warning text-dark">
+                <div class="card-body">
+                    <h2><i class="fas fa-weight-hanging"></i> <span th:text="${#numbers.formatDecimal(totalKg, 1, 1)}">0.0</span> кг</h2>
+                    <p class="fs-4">Всего корма</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow text-center bg-primary text-white">
+                <div class="card-body">
+                    <h2><i class="fas fa-utensils"></i> <span th:text="${totalFeedings}">0</span></h2>
+                    <p class="fs-4">Кормлений</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- По типам корма -->
+    <div class="row g-4" th:if="${hasData}">
+        <div class="col-md-4" th:each="item : ${byType}">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h4 th:text="${item.key}">Неизвестно</h4>
+                    <h2 class="text-success" th:text="${#numbers.formatDecimal(item.value, 1, 1)} + ' кг'">0 кг</h2>
+                    <div class="progress mt-3" style="height: 30px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             th:style="'width:' + (${item.value} * 100 / ${totalKg}) + '%'"
+                             th:text="${#numbers.formatDecimal(item.value * 100 / totalKg, 1, 1)} + '%'">
+                            0%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info text-center" th:unless="${hasData}">
+        Пока нет данных о кормлениях
+    </div>
+</div>
+
+</body>
+</html>
