@@ -20,13 +20,14 @@
 | VET       | Главная → Животные                                                     |
 
 ## Скриншоты
-![Главная](screenshots/home.png)
-![Касса](screenshots/tickets.png)
-![Кормления](screenshots/feedings.png)
-![Статистика билетов](screenshots/tickets-stats.png)
+## Скриншоты
+
+![Главная страница](screenshots/home.jpg)
+![Продажа билетов](screenshots/tickets.jpg)
+![Статистика продажи билетов](screenshots/tickets_statistic.jpg)
 
 ## Запуск
-```bash
+
 # 1. Создать БД zoo_db в MySQL
 # 2. application.properties — указать свой пароль от MySQL
 # 3. Запустить ZooManagementWebApplication.java
@@ -35,7 +36,6 @@
 ## Логин: admin / cashier / vet / keeper → пароль: 123
 
 ## Стек
-
 Spring Boot 3, Spring Security, Spring Data JPA
 Thymeleaf + Bootstrap 5
 MySQL
