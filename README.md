@@ -21,10 +21,10 @@
 | VET       | Главная → Животные                                                     |
 
 ## Скриншоты
-![Главная страница](screenshots/home.jpg)
-![Касса](screenshots/tickets.jpg)
-![Статистика билетов](screenshots/tickets-stats.jpg)
-![Кормления](screenshots/feedings.jpg)
+![Главная страница](screenshots/home.png)
+![Касса](screenshots/tickets.png)
+![Статистика билетов](screenshots/tickets-stats.png)
+![Кормления](screenshots/feedings.png)
 
 ## Запуск
 1. Создать БД `zoo_db` в MySQL
