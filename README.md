@@ -31,10 +31,10 @@ Coursework has → turned into a real product of the junior+ level
 
 
 ## Stack
-Spring Boot 3, Spring Security, Spring Data JPA
-Thymeleaf + Bootstrap 5
-MySQL
-Lombok
+- Spring Boot 3, Spring Security, Spring Data JPA
+- Thymeleaf + Bootstrap 5
+- MySQL
+- Lombok
 
 
 Author: Железнякова Людмила
