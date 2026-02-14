@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика осмотров | Зоопарк «Сафари»</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">
+        <i class="fas fa-chart-bar me-2"></i>Статистика осмотров
+    </h2>
+
+    <!-- Основные показатели -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                    <h6>Всего осмотров</h6>
+                    <h3 th:text="${totalExams}">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-heart fa-2x mb-2"></i>
+                    <h6>Здоровых</h6>
+                    <h3 th:text="${healthyCount}">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                    <h6>Требуют внимания</h6>
+                    <h3 th:text="${sickCount}">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h6>Просрочено</h6>
+                    <h3 th:text="${overdueCount}">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- По статусам -->
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Распределение по статусам здоровья</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Здоров -->
+                <div class="col-md-2 mb-3 text-center">
+                    <div class="border border-success rounded p-3 h-100">
+                        <i class="fas fa-smile fa-2x text-success mb-2"></i>
+                        <h6>Здоров</h6>
+                        <h4 th:text="${healthyCount}">0</h4>
+                    </div>
+                </div>
+                <!-- Требует внимания -->
+                <div class="col-md-2 mb-3 text-center">
+                    <div class="border border-warning rounded p-3 h-100">
+                        <i class="fas fa-meh fa-2x text-warning mb-2"></i>
+                        <h6>Требует внимания</h6>
+                        <h4 th:text="${attentionCount}">0</h4>
+                    </div>
+                </div>
+                <!-- Болеет -->
+                <div class="col-md-2 mb-3 text-center">
+                    <div class="border border-danger rounded p-3 h-100">
+                        <i class="fas fa-frown fa-2x text-danger mb-2"></i>
+                        <h6>Болеет</h6>
+                        <h4 th:text="${sickCount}">0</h4>
+                    </div>
+                </div>
+                <!-- Выздоравливает -->
+                <div class="col-md-2 mb-3 text-center">
+                    <div class="border border-info rounded p-3 h-100">
+                        <i class="fas fa-stethoscope fa-2x text-info mb-2"></i>
+                        <h6>Выздоравливает</h6>
+                        <h4 th:text="${recoveringCount}">0</h4>
+                    </div>
+                </div>
+                <!-- Карантин -->
+                <div class="col-md-2 mb-3 text-center">
+                    <div class="border border-secondary rounded p-3 h-100">
+                        <i class="fas fa-shield-virus fa-2x text-secondary mb-2"></i>
+                        <h6>Карантин</h6>
+                        <h4 th:text="${quarantineCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/veterinary}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> К журналу осмотров
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

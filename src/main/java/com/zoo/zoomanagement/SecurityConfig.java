@@ -15,7 +15,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/feedstock", "/feedstock/**").hasAnyRole("ADMIN", "KEEPER") // ДОБАВИТЬ
+                        .requestMatchers("/feedstock", "/feedstock/**").hasAnyRole("ADMIN", "KEEPER")
+                        .requestMatchers("/veterinary", "/veterinary/**").hasAnyRole("ADMIN", "VET")  // ДОБАВИТЬ
                         .requestMatchers("/staff", "/staff/**").hasRole("ADMIN")
                         .requestMatchers("/tickets", "/tickets/**").hasAnyRole("ADMIN", "CASHIER")
                         .requestMatchers("/feedings", "/feedings/**").hasAnyRole("ADMIN", "KEEPER")

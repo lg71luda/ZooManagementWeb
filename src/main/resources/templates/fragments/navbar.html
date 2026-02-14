@@ -30,6 +30,32 @@
                     <i class="fas fa-cat me-1"></i> Животные
                 </a>
 
+                <!-- Ветеринария - только ADMIN и VET -->
+                <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'VET')">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown">
+                        <i class="fas fa-stethoscope me-1"></i> Ветеринария
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/veterinary}">
+                                <i class="fas fa-list me-2"></i>Журнал осмотров
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/veterinary/schedule}">
+                                <i class="fas fa-calendar-alt me-2"></i>Расписание осмотров
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/veterinary/stats}">
+                                <i class="fas fa-chart-bar me-2"></i>Статистика
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
                 <!-- Сотрудники - только ADMIN -->
                 <a class="nav-link" th:href="@{/staff}"
                    sec:authorize="hasRole('ADMIN')">

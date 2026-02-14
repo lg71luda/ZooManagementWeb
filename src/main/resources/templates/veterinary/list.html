@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Журнал осмотров | Зоопарк «Сафари»</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">
+            <i class="fas fa-stethoscope me-2"></i>Журнал осмотров
+        </h2>
+        <a th:href="@{/veterinary/new}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Новый осмотр
+        </a>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="get" th:action="@{/veterinary}" class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label">Животное</label>
+                    <select class="form-select" name="animalId">
+                        <option value="">Все животные</option>
+                        <option th:each="animal : ${animals}"
+                                th:value="${animal.id}"
+                                th:text="${animal.name + ' (' + animal.species?.name + ')'}"
+                                th:selected="${animal.id == selectedAnimalId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Статус здоровья</label>
+                    <select class="form-select" name="status">
+                        <option value="">Все статусы</option>
+                        <option th:each="s : ${statuses}"
+                                th:value="${s.name()}"
+                                th:text="${s.displayName}"
+                                th:selected="${s.name() == selectedStatus}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i> Фильтр
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Таблица осмотров -->
+    <div class="card shadow">
+        <div class="card-body p-0">
+            <div th:if="${exams.isEmpty()}" class="text-center py-5">
+                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                <h5>Осмотров пока нет</h5>
+                <p class="text-muted">Нажмите "Новый осмотр" для создания записи</p>
+            </div>
+
+            <table th:unless="${exams.isEmpty()}" class="table table-hover mb-0">
+                <thead class="table-primary">
+                <tr>
+                    <th>Дата</th>
+                    <th>Животное</th>
+                    <th>Ветеринар</th>
+                    <th>Статус</th>
+                    <th>Диагноз</th>
+                    <th>След. осмотр</th>
+                    <th class="text-center">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="exam : ${exams}">
+                    <td th:text="${#temporals.format(exam.examDate, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{/veterinary/animal/{id}(id=${exam.animal.id})}">
+                            <strong th:text="${exam.animal.name}"></strong>
+                        </a>
+                        <small class="text-muted d-block" th:text="${exam.animal.species?.name}"></small>
+                    </td>
+                    <td th:text="${exam.veterinarian.name}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${exam.healthStatus.name() == 'HEALTHY'} ? 'bg-success' :
+                                              (${exam.healthStatus.name() == 'SICK'} ? 'bg-danger' :
+                                              (${exam.healthStatus.name() == 'ATTENTION'} ? 'bg-warning text-dark' :
+                                              (${exam.healthStatus.name() == 'RECOVERING'} ? 'bg-info' : 'bg-secondary')))"
+                              th:text="${exam.healthStatus.displayName}"></span>
+                    </td>
+                    <td th:text="${exam.diagnosis} ?: '—'"></td>
+                    <td>
+                        <span th:if="${exam.nextExamDate}"
+                              th:text="${#temporals.format(exam.nextExamDate, 'dd.MM.yyyy')}"
+                              th:classappend="${exam.nextExamDate.isBefore(#temporals.createToday())} ? 'text-danger fw-bold' : ''"></span>
+                        <span th:unless="${exam.nextExamDate}">—</span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/veterinary/edit/{id}(id=${exam.id})}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form th:action="@{/veterinary/delete/{id}(id=${exam.id})}"
+                              method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Удалить запись осмотра?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

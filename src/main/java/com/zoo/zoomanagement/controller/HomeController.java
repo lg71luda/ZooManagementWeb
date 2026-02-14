@@ -8,9 +8,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
+    private final com.zoo.zoomanagement.repository.AnimalRepository animalRepository;
+    private final com.zoo.zoomanagement.repository.StaffRepository staffRepository;
+
+    public HomeController(com.zoo.zoomanagement.repository.AnimalRepository animalRepository,
+                          com.zoo.zoomanagement.repository.StaffRepository staffRepository) {
+        this.animalRepository = animalRepository;
+        this.staffRepository = staffRepository;
+    }
+
     @GetMapping({"/", "/home"})
     public String home(Model model, Authentication authentication) {
-        // Используем параметр Authentication
+        // Данные пользователя
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             String role = authentication.getAuthorities().iterator().next().getAuthority();
@@ -22,9 +31,9 @@ public class HomeController {
             model.addAttribute("role", "UNKNOWN");
         }
 
-        // Можно потом заменить на реальные цифры из репозиториев
-        model.addAttribute("animalCount", 42);
-        model.addAttribute("staffCount", 15);
+        // Реальные данные из базы
+        model.addAttribute("animalCount", animalRepository.count());
+        model.addAttribute("staffCount", staffRepository.count());
 
         return "home";
     }
