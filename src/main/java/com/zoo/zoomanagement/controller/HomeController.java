@@ -10,7 +10,7 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String home(Model model, Authentication authentication) {
-        // Используем параметр Authentication — он гарантированно заполнен!
+        // Используем параметр Authentication
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             String role = authentication.getAuthorities().iterator().next().getAuthority();

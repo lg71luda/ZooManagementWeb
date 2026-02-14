@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -9,7 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=2959&auto=format') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=2959&auto=format') 
+                        center/cover no-repeat;
             color: white;
             padding: 100px 0;
             border-radius: 20px;
@@ -23,36 +26,16 @@
 </head>
 <body class="bg-light">
 
-<!-- ЕДИНОЕ МЕНЮ -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow">
-    <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/home}">
-            <i class="fas fa-paw me-2"></i>Зоопарк «Сафари»
-        </a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" th:href="@{/home}"><i class="fas fa-home me-1"></i> Главная</a>
-            <a class="nav-link" th:href="@{/animals}"><i class="fas fa-cat me-1"></i> Животные</a>
-
-            <!-- Эта строка — только для ADMIN -->
-            <a class="nav-link" th:href="@{/staff}"
-               sec:authorize="hasRole('ADMIN')">
-                <i class="fas fa-users me-1"></i> Сотрудники
-            </a>
-
-            <form th:action="@{/logout}" method="post" class="d-inline">
-                <button class="btn btn-outline-light btn-sm" type="submit">
-                    <i class="fas fa-sign-out-alt me-1"></i> Выход
-                </button>
-            </form>
-        </div>
-    </div>
-</nav>
+<!-- ПОДКЛЮЧЕНИЕ ФРАГМЕНТА МЕНЮ -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container mt-4">
 
     <!-- Приветствие -->
     <div class="hero text-center mb-5">
-        <h1 class="display-3 fw-bold">Добро пожаловать, <span th:text="${username}">Пользователь</span>!</h1>
+        <h1 class="display-3 fw-bold">Добро пожаловать,
+            <span th:text="${username}">Пользователь</span>!
+        </h1>
         <p class="lead">Ваша роль:
             <span class="badge bg-light text-success fs-5" th:text="${role}">ADMIN</span>
         </p>
@@ -95,7 +78,7 @@
             </div>
         </div>
 
-        <!-- Кормления-->
+        <!-- Кормления -->
         <div class="col-md-6 col-lg-4" sec:authorize="hasAnyRole('ADMIN', 'KEEPER')">
             <div class="card h-100 shadow card-hover border-0">
                 <div class="card-body text-center p-5 bg-warning text-dark">

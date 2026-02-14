@@ -10,35 +10,7 @@
 <body class="bg-light">
 
 <!-- ЕДИНОЕ МЕНЮ -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow">
-    <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/home}">
-            <i class="fas fa-paw me-2"></i>Зоопарк «Сафари»
-        </a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" th:href="@{/home}"><i class="fas fa-home me-1"></i> Главная</a>
-            <a class="nav-link" th:href="@{/animals}"><i class="fas fa-cat me-1"></i> Животные</a>
-
-            <a class="nav-link" th:href="@{/staff}" sec:authorize="hasRole('ADMIN')">
-                <i class="fas fa-users me-1"></i> Сотрудники
-            </a>
-
-            <a class="nav-link" th:href="@{/tickets}" sec:authorize="hasAnyRole('ADMIN', 'CASHIER')">
-                <i class="fas fa-ticket-alt me-1"></i> Билеты
-            </a>
-
-            <a class="nav-link" th:href="@{/feedings}" sec:authorize="hasAnyRole('ADMIN', 'KEEPER')">
-                <i class="fas fa-utensils me-1"></i> Кормления
-            </a>
-
-            <form th:action="@{/logout}" method="post" class="d-inline">
-                <button class="btn btn-outline-light btn-sm" type="submit">
-                    <i class="fas fa-sign-out-alt me-1"></i> Выход
-                </button>
-            </form>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">

@@ -1,37 +1,40 @@
-# ZooManagementWeb — Система управления зоопарком
+# ZooManagementWeb — Zoo Management System
 
-**Spring Boot 3 + Thymeleaf + MySQL + Bootstrap 5**
 
-Полноценная веб-система для зоопарка с ролями, кассой, кормлениями и статистикой.
+Web application on **Spring Boot 3 + Thymeleaf + MySQL**  
+Coursework has → turned into a real product of the junior+ level
 
-## Функции
-- Авторизация с ролями (ADMIN, CASHIER, KEEPER, VET)
-- Управление животными + загрузка фото
-- Онлайн-продажа билетов (4 типа) с расчётом суммы
-- Расписание кормлений + учёт расхода корма
-- Статистика по билетам и кормам
-- Адаптивный интерфейс
 
-## Роли и права
-| Роль      | Доступ                                                                 |
+## Features
+- Authorization with roles (ADMIN, CASHIER, KEEPER, VET)
+- Animal management + photo uploading
+- Online ticket sales (4 types) with calculation of the amount
+- Feeding schedule and accounting
+- Feed and ticket statistics
+- Beautiful responsive interface on Bootstrap 5
+
+
+## Roles and rights
+| Role | Access |
 |-----------|------------------------------------------------------------------------|
-| ADMIN     | Всё                                                                    |
-| CASHIER   | Главная → Животные → Билеты (продажа + статистика)                    |
-| KEEPER    | Главная → Животные → Кормления (расписание + статистика)              |
-| VET       | Главная → Животные                                                     |
+| ADMIN     | All |
+| CASHIER   | Home → Animals → Tickets (Sale + Statistics) |
+| KEEPER    | Home → Animals → Feeding (Schedule + Statistics) |
+| VET       | Home → Animals |
 
-## Запуск
-1. Создать БД `zoo_db` в MySQL
-2. В `application.properties` указать пароль от БД
-3. Запустить `ZooManagementWebApplication.java`
-4. Открыть http://localhost:8080
 
-Логин/пароль: `admin`, `cashier`, `vet`, `keeper` → `123`
+## Launch
+1. Create a zoo_db database in MySQL
+2. application.properties — enter your MySQL password
+3. Launch ZooManagementWebApplication.java
+4. Open http://localhost:8080
 
-## Стек
+
+## Stack
 - Spring Boot 3, Spring Security, Spring Data JPA
 - Thymeleaf + Bootstrap 5
 - MySQL
 - Lombok
 
-**Автор: lg71luda**
+
+Author: Железнякова Людмила

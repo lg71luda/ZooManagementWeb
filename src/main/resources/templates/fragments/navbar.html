@@ -1,0 +1,70 @@
+
+html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!--
+    Фрагмент навигационного меню
+
+    th:fragment="navbar" - объявляет фрагмент с именем "navbar"
+    Этот фрагмент можно подключить в любом шаблоне
+-->
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-success shadow">
+    <div class="container">
+        <!-- Логотип и название -->
+        <a class="navbar-brand fw-bold" th:href="@{/home}">
+            <i class="fas fa-paw me-2"></i>Зоопарк «Сафари»
+        </a>
+
+        <!-- Кнопка для мобильного меню -->
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Навигационные ссылки -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto">
+
+                <!-- Главная - доступно всем -->
+                <a class="nav-link" th:href="@{/home}">
+                    <i class="fas fa-home me-1"></i> Главная
+                </a>
+
+                <!-- Животные - доступно всем аутентифицированным -->
+                <a class="nav-link" th:href="@{/animals}">
+                    <i class="fas fa-cat me-1"></i> Животные
+                </a>
+
+                <!-- Сотрудники - только ADMIN -->
+                <a class="nav-link" th:href="@{/staff}"
+                   sec:authorize="hasRole('ADMIN')">
+                    <i class="fas fa-users me-1"></i> Сотрудники
+                </a>
+
+                <!-- Билеты - ADMIN и CASHIER -->
+                <a class="nav-link" th:href="@{/tickets}"
+                    sec:authorize="hasAnyRole('ADMIN', 'CASHIER')">
+                    <i class="fas fa-ticket-alt me-1"></i> Билеты
+                </a>
+
+                <!-- Кормления - ADMIN и KEEPER -->
+                <a class="nav-link" th:href="@{/feedings}"
+                    sec:authorize="hasAnyRole('ADMIN', 'KEEPER')">
+                    <i class="fas fa-utensils me-1"></i> Кормления
+                </a>
+
+                <!-- Кнопка выхода -->
+                <form th:action="@{/logout}" method="post" class="d-inline ms-2">
+                    <button class="btn btn-outline-light btn-sm" type="submit">
+                        <i class="fas fa-sign-out-alt me-1"></i> Выход
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+</html>
