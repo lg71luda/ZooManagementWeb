@@ -15,6 +15,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/feedstock", "/feedstock/**").hasAnyRole("ADMIN", "KEEPER") // ДОБАВИТЬ
                         .requestMatchers("/staff", "/staff/**").hasRole("ADMIN")
                         .requestMatchers("/tickets", "/tickets/**").hasAnyRole("ADMIN", "CASHIER")
                         .requestMatchers("/feedings", "/feedings/**").hasAnyRole("ADMIN", "KEEPER")
@@ -39,6 +40,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ВНИМАНИЕ: Здесь НЕ должно быть userDetailsService() с InMemoryUserDetailsManager!
-    // Spring автоматически найдёт CustomUserDetailsService благодаря аннотации @Service
 }

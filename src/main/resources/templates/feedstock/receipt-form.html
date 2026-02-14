@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Поступление корма | Зоопарк «Сафари»</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-truck me-2"></i>Новое поступление корма
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/feedstock/receipts}" th:object="${receiptDto}" method="post" novalidate>
+
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Исправьте ошибки в форме
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="feedTypeId" class="form-label">Вид корма <span class="text-danger">*</span></label>
+                                <select class="form-select"
+                                        th:classappend="${#fields.hasErrors('feedTypeId')} ? 'is-invalid' : ''"
+                                        id="feedTypeId" th:field="*{feedTypeId}" required>
+                                    <option value="">-- Выберите вид корма --</option>
+                                    <option th:each="type : ${feedTypes}"
+                                            th:value="${type.id}"
+                                            th:text="${type.name + ' (' + type.unit + ')'}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('feedTypeId')}">
+                                    <span th:errors="*{feedTypeId}"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="receiptDate" class="form-label">Дата поступления <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control"
+                                       th:classappend="${#fields.hasErrors('receiptDate')} ? 'is-invalid' : ''"
+                                       id="receiptDate" th:field="*{receiptDate}" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('receiptDate')}">
+                                    <span th:errors="*{receiptDate}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="quantity" class="form-label">Количество <span class="text-danger">*</span></label>
+                                <input type="number" step="0.1" class="form-control"
+                                       th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid' : ''"
+                                       id="quantity" th:field="*{quantity}" placeholder="0.0" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}">
+                                    <span th:errors="*{quantity}"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Цена за единицу (₽)</label>
+                                <input type="number" step="0.01" class="form-control"
+                                       th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''"
+                                       id="price" th:field="*{price}" placeholder="0.00">
+                                <div class="form-text">Общая сумма рассчитается автоматически</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="supplier" class="form-label">Поставщик</label>
+                                <input type="text" class="form-control" id="supplier" th:field="*{supplier}"
+                                       placeholder="Название организации">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="invoiceNumber" class="form-label">Номер накладной</label>
+                                <input type="text" class="form-control" id="invoiceNumber" th:field="*{invoiceNumber}"
+                                       placeholder="№ документа">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Примечания</label>
+                            <textarea class="form-control" id="notes" th:field="*{notes}"
+                                      rows="2" placeholder="Дополнительная информация..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/feedstock/receipts}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-1"></i> Оформить поступление
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
