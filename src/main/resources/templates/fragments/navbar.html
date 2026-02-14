@@ -1,15 +1,8 @@
 
-html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<!--
-    Фрагмент навигационного меню
-
-    th:fragment="navbar" - объявляет фрагмент с именем "navbar"
-    Этот фрагмент можно подключить в любом шаблоне
--->
 <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-success shadow">
     <div class="container">
         <!-- Логотип и название -->
@@ -27,12 +20,12 @@ html
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
 
-                <!-- Главная - доступно всем -->
+                <!-- Главная -->
                 <a class="nav-link" th:href="@{/home}">
                     <i class="fas fa-home me-1"></i> Главная
                 </a>
 
-                <!-- Животные - доступно всем аутентифицированным -->
+                <!-- Животные -->
                 <a class="nav-link" th:href="@{/animals}">
                     <i class="fas fa-cat me-1"></i> Животные
                 </a>
@@ -43,17 +36,45 @@ html
                     <i class="fas fa-users me-1"></i> Сотрудники
                 </a>
 
-                <!-- Билеты - ADMIN и CASHIER -->
-                <a class="nav-link" th:href="@{/tickets}"
-                    sec:authorize="hasAnyRole('ADMIN', 'CASHIER')">
-                    <i class="fas fa-ticket-alt me-1"></i> Билеты
-                </a>
+                <!-- Билеты - выпадающее меню для ADMIN и CASHIER -->
+                <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'CASHIER')">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown">
+                        <i class="fas fa-ticket-alt me-1"></i> Билеты
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/tickets}">
+                                <i class="fas fa-list me-2"></i>Продажа билетов
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/tickets/stats}">
+                                <i class="fas fa-chart-bar me-2"></i>Статистика билетов
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-                <!-- Кормления - ADMIN и KEEPER -->
-                <a class="nav-link" th:href="@{/feedings}"
-                    sec:authorize="hasAnyRole('ADMIN', 'KEEPER')">
-                    <i class="fas fa-utensils me-1"></i> Кормления
-                </a>
+                <!-- Кормления - выпадающее меню для ADMIN и KEEPER -->
+                <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN', 'KEEPER')">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown">
+                        <i class="fas fa-utensils me-1"></i> Кормления
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/feedings}">
+                                <i class="fas fa-list me-2"></i>Расписание
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/feedings/stats}">
+                                <i class="fas fa-chart-pie me-2"></i>Статистика кормов
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                 <!-- Кнопка выхода -->
                 <form th:action="@{/logout}" method="post" class="d-inline ms-2">

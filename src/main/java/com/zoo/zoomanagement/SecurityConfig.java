@@ -3,11 +3,8 @@ package com.zoo.zoomanagement;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -20,6 +17,7 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/staff", "/staff/**").hasRole("ADMIN")
                         .requestMatchers("/tickets", "/tickets/**").hasAnyRole("ADMIN", "CASHIER")
+                        .requestMatchers("/feedings", "/feedings/**").hasAnyRole("ADMIN", "KEEPER")
                         .requestMatchers("/animals", "/animals/**")
                         .hasAnyRole("ADMIN", "VET", "KEEPER", "CASHIER")
                         .anyRequest().authenticated()
@@ -37,30 +35,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        var encoder = new BCryptPasswordEncoder();
-        var admin = User.withUsername("admin")
-                .password(encoder.encode("123"))
-                .roles("ADMIN")
-                .build();
-        var cashier = User.withUsername("cashier")
-                .password(encoder.encode("123"))
-                .roles("CASHIER")
-                .build();
-        var vet = User.withUsername("vet")
-                .password(encoder.encode("123"))
-                .roles("VET")
-                .build();
-        var keeper = User.withUsername("keeper")
-                .password(encoder.encode("123"))
-                .roles("KEEPER")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, cashier, vet, keeper);
-    }
-
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    // ВНИМАНИЕ: Здесь НЕ должно быть userDetailsService() с InMemoryUserDetailsManager!
+    // Spring автоматически найдёт CustomUserDetailsService благодаря аннотации @Service
 }

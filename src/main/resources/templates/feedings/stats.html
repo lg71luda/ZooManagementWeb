@@ -1,51 +1,221 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Статистика кормлений</title>
+    <title>Статистика билетов | Зоопарк «Сафари»</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .period-btn.active {
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.5);
+        }
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .change-positive { color: #198754; }
+        .change-negative { color: #dc3545; }
+    </style>
 </head>
 <body class="bg-light">
 
+<!-- Меню -->
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container mt-5">
-    <h1 class="text-success text-center mb-5">Статистика по кормам</h1>
+<div class="container mt-4">
+    <h2 class="text-info mb-4">
+        <i class="fas fa-chart-bar me-2"></i>Статистика продаж билетов
+    </h2>
 
-    <!-- Общая сводка -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-6">
-            <div class="card shadow text-center bg-warning text-dark">
-                <div class="card-body">
-                    <h2><i class="fas fa-weight-hanging"></i> <span th:text="${#numbers.formatDecimal(totalKg, 1, 1)}">0.0</span> кг</h2>
-                    <p class="fs-4">Всего корма</p>
+    <!-- Выбор периода -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="get" th:action="@{/tickets/stats}" class="row g-3 align-items-end">
+
+                <!-- Быстрый выбор периода -->
+                <div class="col-12 mb-2">
+                    <label class="form-label"><strong>Быстрый выбор:</strong></label>
+                    <div class="btn-group flex-wrap" role="group">
+                        <a th:href="@{/tickets/stats(period='today')}"
+                           class="btn btn-outline-success period-btn"
+                           th:classappend="${period == 'today'} ? 'active'">
+                            <i class="fas fa-sun me-1"></i> Сегодня
+                        </a>
+                        <a th:href="@{/tickets/stats(period='yesterday')}"
+                           class="btn btn-outline-success period-btn"
+                           th:classappend="${period == 'yesterday'} ? 'active'">
+                            <i class="fas fa-calendar-day me-1"></i> Вчера
+                        </a>
+                        <a th:href="@{/tickets/stats(period='week')}"
+                           class="btn btn-outline-success period-btn"
+                           th:classappend="${period == 'week'} ? 'active'">
+                            <i class="fas fa-calendar-week me-1"></i> Неделя
+                        </a>
+                        <a th:href="@{/tickets/stats(period='month')}"
+                           class="btn btn-outline-success period-btn"
+                           th:classappend="${period == 'month'} ? 'active'">
+                            <i class="fas fa-calendar-alt me-1"></i> Месяц
+                        </a>
+                        <a th:href="@{/tickets/stats(period='year')}"
+                           class="btn btn-outline-success period-btn"
+                           th:classappend="${period == 'year'} ? 'active'">
+                            <i class="fas fa-calendar me-1"></i> Год
+                        </a>
+                        <a th:href="@{/tickets/stats(period='all')}"
+                           class="btn btn-outline-success period-btn"
+                           th:classappend="${period == 'all' or period == null} ? 'active'">
+                            <i class="fas fa-infinity me-1"></i> Всё время
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Выбор конкретного периода -->
+                <div class="col-md-3">
+                    <label for="dateFrom" class="form-label">С:</label>
+                    <input type="date" class="form-control" id="dateFrom" name="dateFrom"
+                           th:value="${dateFrom}">
+                </div>
+                <div class="col-md-3">
+                    <label for="dateTo" class="form-label">По:</label>
+                    <input type="date" class="form-control" id="dateTo" name="dateTo"
+                           th:value="${dateTo}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-filter me-1"></i> Применить
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <a th:href="@{/tickets/stats}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times me-1"></i> Сбросить
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Метка текущего периода -->
+    <div class="alert alert-info mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Период:</strong> <span th:text="${periodLabel}">Всё время</span>
+        <span th:if="${dateFrom != null and dateTo != null}">
+            (<span th:text="${dateFrom}"></span> — <span th:text="${dateTo}"></span>)
+        </span>
+    </div>
+
+    <!-- Основные показатели -->
+    <div class="row g-4 mb-4">
+        <!-- Общая выручка -->
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100 stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-ruble-sign fa-2x mb-2"></i>
+                    <h6 class="card-title">Общая выручка</h6>
+                    <h3 th:text="${#numbers.formatDecimal(totalRevenue, 0, 0)} + ' ₽'">0 ₽</h3>
+                    <small th:if="${revenueChange != 0}">
+                        <span th:classappend="${revenueChange >= 0} ? 'change-positive' : 'change-negative'">
+                            <i th:classappend="${revenueChange >= 0} ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                            <span th:text="${#numbers.formatDecimal(revenueChange, 0, 1)}"></span>%
+                        </span>
+                        <span class="text-white-50"> к прошлому периоду</span>
+                    </small>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card shadow text-center bg-primary text-white">
-                <div class="card-body">
-                    <h2><i class="fas fa-utensils"></i> <span th:text="${totalFeedings}">0</span></h2>
-                    <p class="fs-4">Кормлений</p>
+
+        <!-- Продано билетов -->
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100 stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-ticket-alt fa-2x mb-2"></i>
+                    <h6 class="card-title">Продано билетов</h6>
+                    <h3 th:text="${totalTickets}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Количество продаж -->
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100 stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                    <h6 class="card-title">Количество продаж</h6>
+                    <h3 th:text="${totalSales}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Средний чек -->
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark h-100 stat-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-receipt fa-2x mb-2"></i>
+                    <h6 class="card-title">Средний чек</h6>
+                    <h3 th:text="${#numbers.formatDecimal(averageCheck, 0, 0)} + ' ₽'">0 ₽</h3>
+                    <small class="text-muted">
+                        ~<span th:text="${#numbers.formatDecimal(avgTicketsPerSale, 1, 1)}"></span> бил. за продажу
+                    </small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- По типам корма -->
-    <div class="row g-4" th:if="${hasData}">
-        <div class="col-md-4" th:each="item : ${byType}">
-            <div class="card shadow h-100">
-                <div class="card-body text-center">
-                    <h4 th:text="${item.key}">Неизвестно</h4>
-                    <h2 class="text-success" th:text="${#numbers.formatDecimal(item.value, 1, 1)} + ' кг'">0 кг</h2>
-                    <div class="progress mt-3" style="height: 30px;">
-                        <div class="progress-bar bg-success" role="progressbar"
-                             th:style="'width:' + (${item.value} * 100 / ${totalKg}) + '%'"
-                             th:text="${#numbers.formatDecimal(item.value * 100 / totalKg, 1, 1)} + '%'">
-                            0%
+    <!-- По типам билетов -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-tags me-2"></i>Продажи по типам билетов</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center mb-3">
+                    <div class="border rounded p-3 h-100">
+                        <i class="fas fa-user fa-2x text-primary mb-2"></i>
+                        <h6>Взрослые</h6>
+                        <h4 class="text-primary" th:text="${adult}">0</h4>
+                        <small class="text-muted">билетов</small>
+                        <div class="progress mt-2" style="height: 5px;" th:if="${totalTickets > 0}">
+                            <div class="progress-bar bg-primary"
+                                 th:style="'width: ' + ${(adult * 100 / totalTickets)} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center mb-3">
+                    <div class="border rounded p-3 h-100">
+                        <i class="fas fa-child fa-2x text-success mb-2"></i>
+                        <h6>Детские</h6>
+                        <h4 class="text-success" th:text="${child}">0</h4>
+                        <small class="text-muted">билетов</small>
+                        <div class="progress mt-2" style="height: 5px;" th:if="${totalTickets > 0}">
+                            <div class="progress-bar bg-success"
+                                 th:style="'width: ' + ${(child * 100 / totalTickets)} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center mb-3">
+                    <div class="border rounded p-3 h-100">
+                        <i class="fas fa-user-tag fa-2x text-warning mb-2"></i>
+                        <h6>Льготные</h6>
+                        <h4 class="text-warning" th:text="${privileged}">0</h4>
+                        <small class="text-muted">билетов</small>
+                        <div class="progress mt-2" style="height: 5px;" th:if="${totalTickets > 0}">
+                            <div class="progress-bar bg-warning"
+                                 th:style="'width: ' + ${(privileged * 100 / totalTickets)} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center mb-3">
+                    <div class="border rounded p-3 h-100">
+                        <i class="fas fa-users fa-2x text-info mb-2"></i>
+                        <h6>Семейные</h6>
+                        <h4 class="text-info" th:text="${family}">0</h4>
+                        <small class="text-muted">билетов</small>
+                        <div class="progress mt-2" style="height: 5px;" th:if="${totalTickets > 0}">
+                            <div class="progress-bar bg-info"
+                                 th:style="'width: ' + ${(family * 100 / totalTickets)} + '%'"></div>
                         </div>
                     </div>
                 </div>
@@ -53,8 +223,14 @@
         </div>
     </div>
 
-    <div class="alert alert-info text-center" th:unless="${hasData}">
-        Пока нет данных о кормлениях
+    <!-- Кнопки -->
+    <div class="d-flex justify-content-between">
+        <a th:href="@{/tickets}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Назад к продажам
+        </a>
+        <button class="btn btn-outline-success" onclick="window.print()">
+            <i class="fas fa-print me-1"></i> Печать отчёта
+        </button>
     </div>
 </div>
 

@@ -48,14 +48,21 @@ public class DataInitializer {
             enclosureRepository.save(new Enclosure(null, "Террариум", 15, 0));
         }
 
-        // Админ
+        // Пользователи - СОЗДАЁМ НЕСКОЛЬКО ДЛЯ ТЕСТОВ
         if (staffRepository.count() == 0) {
-            Staff admin = new Staff();
-            admin.setName("Администратор");
-            admin.setLogin("admin");
-            admin.setPassword(passwordEncoder.encode("123456"));
-            admin.setRole("ADMIN");
-            staffRepository.save(admin);
+            createStaff("Администратор", "admin", "123456", "ADMIN");
+            createStaff("Кассир Иванова", "cashier", "123456", "CASHIER");
+            createStaff("Ветеринар Петров", "vet", "123456", "VET");
+            createStaff("Смотритель Сидоров", "keeper", "123456", "KEEPER");
         }
+    }
+
+    private void createStaff(String name, String login, String password, String role) {
+        Staff staff = new Staff();
+        staff.setName(name);
+        staff.setLogin(login);
+        staff.setPassword(passwordEncoder.encode(password)); // Хешируем пароль!
+        staff.setRole(role);
+        staffRepository.save(staff);
     }
 }
