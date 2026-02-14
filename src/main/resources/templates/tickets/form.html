@@ -1,39 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Продажа билетов</title>
+    <title>Продажа билета | Зоопарк «Сафари»</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="bg-light">
 
+<!-- Меню -->
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card shadow">
-                <div class="card-header bg-success text-white text-center">
-                    <h3>Продажа билетов</h3>
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-ticket-alt me-2"></i>Продажа билета
+                    </h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/tickets/sell}" th:object="${ticket}" method="post">
+
+                    <!-- Прейскурант -->
+                    <div class="alert alert-light border">
+                        <h5><i class="fas fa-tag me-2"></i>Прейскурант:</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Взрослый:</strong> 800 ₽</li>
+                            <li><strong>Детский:</strong> 400 ₽</li>
+                            <li><strong>Льготный:</strong> 500 ₽</li>
+                            <li><strong>Семейный:</strong> 2000 ₽</li>
+                        </ul>
+                    </div>
+
+                    <form th:action="@{/tickets/sell}" th:object="${ticketDto}" method="post" novalidate>
+
+                        <!-- Глобальные ошибки -->
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Исправьте ошибки в форме
+                        </div>
+
+                        <!-- Тип билета -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Тип билета</label>
-                            <select th:field="*{type}" class="form-select form-select-lg" required>
-                                <option value="Взрослый">Взрослый — 800 ₽</option>
-                                <option value="Детский">Детский (до 14 лет) — 400 ₽</option>
-                                <option value="Льготный">Льготный (пенсионеры, студенты) — 500 ₽</option>
-                                <option value="Семейный">Семейный (2 взр. + 2 дет.) — 2000 ₽</option>
+                            <label for="type" class="form-label">
+                                Тип билета <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select"
+                                    th:classappend="${#fields.hasErrors('type')} ? 'is-invalid' : ''"
+                                    id="type"
+                                    th:field="*{type}">
+                                <option value="">-- Выберите тип --</option>
+                                <option value="Взрослый">Взрослый (800 ₽)</option>
+                                <option value="Детский">Детский (400 ₽)</option>
+                                <option value="Льготный">Льготный (500 ₽)</option>
+                                <option value="Семейный">Семейный (2000 ₽)</option>
                             </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('type')}">
+                                <span th:errors="*{type}"></span>
+                            </div>
                         </div>
+
+                        <!-- Количество -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Количество</label>
-                            <input type="number" th:field="*{quantity}" class="form-control form-control-lg" min="1" value="1" required/>
+                            <label for="quantity" class="form-label">
+                                Количество <span class="text-danger">*</span>
+                            </label>
+                            <input type="number"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('quantity')} ? 'is-invalid' : ''"
+                                   id="quantity"
+                                   th:field="*{quantity}"
+                                   min="1"
+                                   value="1">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('quantity')}">
+                                <span th:errors="*{quantity}"></span>
+                            </div>
                         </div>
-                        <div class="text-end">
-                            <a th:href="@{/tickets}" class="btn btn-secondary btn-lg">Отмена</a>
-                            <button type="submit" class="btn btn-success btn-lg">Продать билет</button>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/tickets}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="fas fa-check me-1"></i> Продать
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -41,5 +95,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>

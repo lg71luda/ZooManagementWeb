@@ -1,10 +1,14 @@
 package com.zoo.zoomanagement.controller;
 
+import com.zoo.zoomanagement.dto.FeedingDto;
+import com.zoo.zoomanagement.model.Animal;
 import com.zoo.zoomanagement.model.Feeding;
-import com.zoo.zoomanagement.repository.FeedingRepository;
 import com.zoo.zoomanagement.repository.AnimalRepository;
+import com.zoo.zoomanagement.repository.FeedingRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,13 +35,36 @@ public class FeedingController {
 
     @GetMapping("/new")
     public String newFeeding(Model model) {
-        model.addAttribute("feeding", new Feeding());
+        model.addAttribute("feedingDto", new FeedingDto());
         model.addAttribute("animals", animalRepository.findAll());
         return "feedings/form";
     }
 
     @PostMapping
-    public String save(@ModelAttribute Feeding feeding) {
+    public String save(@Valid @ModelAttribute("feedingDto") FeedingDto feedingDto,
+                       BindingResult bindingResult,
+                       Model model) {
+
+        // Если есть ошибки валидации
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("animals", animalRepository.findAll());
+            return "feedings/form";
+        }
+
+        // Создаём Feeding из DTO
+        Feeding feeding = new Feeding();
+        feeding.setFeedType(feedingDto.getFeedType());
+        feeding.setQuantity(feedingDto.getQuantity());
+        feeding.setTime(feedingDto.getTime());
+        feeding.setNotes(feedingDto.getNotes());
+
+        // Загружаем Animal
+        if (feedingDto.getAnimalId() != null) {
+            Animal animal = animalRepository.findById(feedingDto.getAnimalId())
+                    .orElseThrow(() -> new IllegalArgumentException("Неверный ID животного"));
+            feeding.setAnimal(animal);
+        }
+
         feedingRepository.save(feeding);
         return "redirect:/feedings";
     }
@@ -46,18 +73,15 @@ public class FeedingController {
     public String stats(Model model) {
         List<Feeding> all = feedingRepository.findAll();
 
-        // Общая статистика
         double totalKg = all.stream().mapToDouble(Feeding::getQuantity).sum();
         long totalFeedings = all.size();
 
-        // По типам корма
         Map<String, Double> byType = all.stream()
                 .collect(Collectors.groupingBy(
                         Feeding::getFeedType,
                         Collectors.summingDouble(Feeding::getQuantity)
                 ));
 
-        // Сортируем по убыванию
         List<Map.Entry<String, Double>> sorted = byType.entrySet().stream()
                 .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
                 .collect(Collectors.toList());
@@ -70,3 +94,4 @@ public class FeedingController {
         return "feedings/stats";
     }
 }
+
